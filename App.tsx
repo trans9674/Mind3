@@ -20,6 +20,13 @@ import {
 
 const STORAGE_KEY = 'iekoto_mind_data_v1';
 
+// Add type definition for showSaveFilePicker to window
+declare global {
+  interface Window {
+    showSaveFilePicker?: (options?: any) => Promise<any>;
+  }
+}
+
 const App: React.FC = () => {
   const [showSplash, setShowSplash] = useState(true);
   
@@ -189,16 +196,43 @@ const App: React.FC = () => {
   };
 
   // Handlers for Import/Export
-  const handleExport = () => {
+  const handleExport = async () => {
     const dataStr = JSON.stringify({ customers, columns, tasks, employees, templateTasks }, null, 2);
     const blob = new Blob([dataStr], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `iekoto_data_${new Date().toISOString().slice(0,10)}.json`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    const suggestedName = `iekoto_data_${new Date().toISOString().slice(0,10)}.json`;
+
+    // Use the File System Access API (showSaveFilePicker) if available
+    if (window.showSaveFilePicker) {
+      try {
+        const handle = await window.showSaveFilePicker({
+          suggestedName,
+          types: [{
+            description: 'JSON ファイル',
+            accept: { 'application/json': ['.json'] },
+          }],
+        });
+        const writable = await handle.createWritable();
+        await writable.write(blob);
+        await writable.close();
+      } catch (err) {
+        // Handle user cancellation gracefully
+        if (err instanceof DOMException && err.name === 'AbortError') {
+          console.log('File save cancelled by user.');
+        } else {
+          console.error('Failed to save file:', err);
+        }
+      }
+    } else {
+      // Fallback for older browsers (standard download)
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = suggestedName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
   };
 
   const handleImportClick = () => {
