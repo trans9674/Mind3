@@ -299,7 +299,7 @@ const App: React.FC = () => {
                   <circle cx="31" cy="22.5" r="1" fill="currentColor" stroke="none" />
                 </svg>
               </div>
-              <h1 className="text-xl font-bold tracking-tight hidden lg:block">ie-koto MIND</h1>
+              <h1 className="text-xl font-bold tracking-tight hidden lg:block" translate="no">ie-koto MIND</h1>
             </button>
 
             {/* Dropdown Menu */}
