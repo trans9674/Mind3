@@ -255,7 +255,7 @@ const generateCustomers = (count: number): Customer[] => {
             sales_rep: sales,
             architect: arch,
             ic: ic,
-            constructor: status === CustomerStatus.CONSTRUCTION || status === CustomerStatus.RESIDENT ? CONSTRUCTORS[Math.floor(Math.random() * CONSTRUCTORS.length)] : '-';
+            constructor: status === CustomerStatus.CONSTRUCTION || status === CustomerStatus.RESIDENT ? CONSTRUCTORS[Math.floor(Math.random() * CONSTRUCTORS.length)] : '-',
             contract_date: contractDateStr,
             amount: amount,
             phone: `090-${Math.floor(Math.random() * 9000 + 1000)}-${Math.floor(Math.random() * 9000 + 1000)}`
